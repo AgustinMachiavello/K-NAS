@@ -21,6 +21,16 @@ jobs:
       # 1. Get the repo code
       - uses: actions/checkout@v4
 
+      # 1b. A release tag must match KNAS_VERSION in config.sh, so the ISO is labeled correctly
+      - name: Check the tag matches the version
+        if: startsWith(github.ref, 'refs/tags/')
+        run: |
+          version=$(sed -n 's/^KNAS_VERSION="\(.*\)"/\1/p' apps/tui/config.sh)
+          [ "$GITHUB_REF_NAME" = "v$version" ] || {
+            echo "Tag $GITHUB_REF_NAME does not match KNAS_VERSION $version in apps/tui/config.sh"
+            exit 1
+          }
+
       # 2. Fetch the official Debian ISO and prove it is genuine
       - name: Download and verify the latest Debian netinst ISO
         working-directory: os/debian
