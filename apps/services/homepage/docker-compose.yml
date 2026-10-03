@@ -1,0 +1,13 @@
+# Homepage: a start page with links to your services.
+services:
+  homepage:
+    container_name: homepage
+    image: ghcr.io/gethomepage/homepage:${HOMEPAGE_VERSION:-v2.4.0}
+    ports:
+      - "${APP_PORT}:3000"
+    volumes:
+      - ${APP_DATA}/config:/app/config
+    environment:
+      # Homepage only answers to the names listed here (it blocks unknown hosts)
+      HOMEPAGE_ALLOWED_HOSTS: ${KNAS_HOSTNAME}:${APP_PORT},${KNAS_IP}:${APP_PORT}
+    restart: unless-stopped
