@@ -3,6 +3,20 @@
 # Load K-NAS common code
 source "$(dirname "${BASH_SOURCE[0]}")/common.sh"
 
+clear
+cat <<EOF
+
+  _  __     _   _    _    ____
+ | |/ /    | \ | |  / \  / ___|
+ | ' /_____|  \| | / _ \ \___ \\
+ | . \_____| |\  |/ ___ \ ___) |
+ |_|\_\    |_| \_/_/   \_\____/
+
+ Own your things locally!  v$KNAS_VERSION
+
+EOF
+sleep 1.5
+
 # Keep showing the main menu
 while true; do
 
