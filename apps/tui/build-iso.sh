@@ -8,11 +8,11 @@ fi
 
 echo "Building automated Debian ISO..."
 
-# Move to the Debian folder (ISO and preseed.cfg live there)
-cd "$(dirname "${BASH_SOURCE[0]}")/../../os/debian"
+# Move to the repo root
+cd "$(dirname "${BASH_SOURCE[0]}")/../.." || exit 1
 
-# Run a temporary Debian container mapping the current directory to /data
-docker run --rm -v "$(pwd):/data" debian:bookworm-slim bash -c "
+# Run a temporary Debian container. The Debian folder (ISO and preseed.cfg) is /data, the repo is /repo
+docker run --rm -v "$(pwd)/os/debian:/data" -v "$(pwd):/repo:ro" debian:bookworm-slim bash -c "
   # 1. Install required ISO manipulation utilities inside the container
   DEBIAN_FRONTEND=noninteractive apt-get update -qq && apt-get install -y -qq xorriso p7zip-full > /dev/null && \
 
@@ -26,10 +26,15 @@ docker run --rm -v "$(pwd):/data" debian:bookworm-slim bash -c "
   # 3. Copy preseed.cfg to the root of the extracted ISO
   cp /data/preseed.cfg /tmp/iso/preseed.cfg && \
 
-  # 4. Overwrite GRUB configuration to automatically select unattended install with 1s timeout
-  printf 'set default=\"0\"\nset timeout=1\n\nmenuentry \"Debian Auto Install (Preseed)\" {\n    set background_color=black\n    linux /install.amd/vmlinuz auto=true priority=critical file=/cdrom/preseed.cfg quiet ---\n    initrd /install.amd/initrd.gz\n}\n' > /tmp/iso/boot/grub/grub.cfg && \
+  # 4. Copy K-NAS onto the ISO, the installer copies it to the new system
+  mkdir -p /tmp/iso/k-nas && \
+  cp -r /repo/apps /tmp/iso/k-nas/apps && \
+  cp /data/late-command.sh /tmp/iso/k-nas/late-command.sh && \
 
-  # 5. Re-pack the modified filesystem into a bootable hybrid UEFI/BIOS ISO
+  # 5. Overwrite GRUB configuration with the unattended install entry. No timeout: the install erases a disk, so it only starts when someone presses Enter
+  printf 'set default=\"0\"\nset timeout=-1\n\nmenuentry \"K-NAS install: ERASES the disk it installs on (press Enter to start)\" {\n    set background_color=black\n    linux /install.amd/vmlinuz auto=true priority=high file=/cdrom/preseed.cfg quiet ---\n    initrd /install.amd/initrd.gz\n}\n' > /tmp/iso/boot/grub/grub.cfg && \
+
+  # 6. Re-pack the modified filesystem into a bootable hybrid UEFI/BIOS ISO
   xorriso -as mkisofs \
     -r -V 'DEBIAN_AUTO' \
     -J -joliet-long \
