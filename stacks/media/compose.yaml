@@ -1,0 +1,146 @@
+# Movies, series and music: Seerr -> Radarr/Sonarr/Lidarr -> Prowlarr + qBittorrent -> Jellyfin/Navidrome.
+# Everything lives in MEDIA_FOLDER so finished downloads are hardlinked, not copied.
+# Apps reach each other by name, e.g. http://radarr:7878.
+
+services:
+  # Creates the folders once, then exits (normal)
+  folders:
+    image: busybox:stable
+    command: >-
+      sh -c "mkdir -p /data/downloads /data/movies /data/series /data/music &&
+      chown ${PUID}:${PGID} /data /data/downloads /data/movies /data/series /data/music &&
+      chown -R 1000:1000 /seerr"
+    volumes:
+      - ${MEDIA_FOLDER}:/data
+      - ./seerr:/seerr
+    restart: "no"
+
+  jellyfin:
+    container_name: jellyfin
+    image: jellyfin/jellyfin:latest
+    ports:
+      - "8096:8096"
+    volumes:
+      - ./jellyfin/config:/config
+      - ./jellyfin/cache:/cache
+      # Read-only
+      - ${MEDIA_FOLDER}:/media:ro
+    depends_on:
+      folders:
+        condition: service_completed_successfully
+    restart: unless-stopped
+
+  seerr:
+    container_name: seerr
+    image: ghcr.io/seerr-team/seerr:latest
+    init: true
+    ports:
+      - "5055:5055"
+    volumes:
+      # Seerr runs as user 1000
+      - ./seerr:/app/config
+    security_opt:
+      - no-new-privileges
+    cap_drop:
+      - ALL
+    depends_on:
+      folders:
+        condition: service_completed_successfully
+    restart: unless-stopped
+
+  radarr:
+    container_name: radarr
+    image: lscr.io/linuxserver/radarr:latest
+    environment:
+      PUID: ${PUID}
+      PGID: ${PGID}
+      # No login from the home network
+      RADARR__AUTH__METHOD: Forms
+      RADARR__AUTH__REQUIRED: DisabledForLocalAddresses
+    ports:
+      - "7878:7878"
+    volumes:
+      - ./radarr:/config
+      - ${MEDIA_FOLDER}:/data
+    depends_on:
+      folders:
+        condition: service_completed_successfully
+    restart: unless-stopped
+
+  sonarr:
+    container_name: sonarr
+    image: lscr.io/linuxserver/sonarr:latest
+    environment:
+      PUID: ${PUID}
+      PGID: ${PGID}
+      # No login from the home network
+      SONARR__AUTH__METHOD: Forms
+      SONARR__AUTH__REQUIRED: DisabledForLocalAddresses
+    ports:
+      - "8989:8989"
+    volumes:
+      - ./sonarr:/config
+      - ${MEDIA_FOLDER}:/data
+    depends_on:
+      folders:
+        condition: service_completed_successfully
+    restart: unless-stopped
+
+  lidarr:
+    container_name: lidarr
+    image: lscr.io/linuxserver/lidarr:latest
+    environment:
+      PUID: ${PUID}
+      PGID: ${PGID}
+      # No login from the home network
+      LIDARR__AUTH__METHOD: Forms
+      LIDARR__AUTH__REQUIRED: DisabledForLocalAddresses
+    ports:
+      - "8686:8686"
+    volumes:
+      - ./lidarr:/config
+      - ${MEDIA_FOLDER}:/data
+    depends_on:
+      folders:
+        condition: service_completed_successfully
+    restart: unless-stopped
+
+  prowlarr:
+    container_name: prowlarr
+    image: lscr.io/linuxserver/prowlarr:latest
+    environment:
+      PUID: ${PUID}
+      PGID: ${PGID}
+      # No login from the home network
+      PROWLARR__AUTH__METHOD: Forms
+      PROWLARR__AUTH__REQUIRED: DisabledForLocalAddresses
+    ports:
+      - "9696:9696"
+    volumes:
+      - ./prowlarr:/config
+    restart: unless-stopped
+
+  qbittorrent:
+    container_name: qbittorrent
+    image: lscr.io/linuxserver/qbittorrent:latest
+    environment:
+      PUID: ${PUID}
+      PGID: ${PGID}
+      # Must match the ports below
+      WEBUI_PORT: 8085
+      TORRENTING_PORT: 6881
+    volumes:
+      # qBittorrent.conf here sets /data/downloads and no login from the home network
+      - ./qbittorrent:/config
+      - ${MEDIA_FOLDER}:/data
+    ports:
+      # Web page (8080 is Pi-hole's)
+      - "8085:8085"
+      # Peers
+      - "6881:6881"
+      - "6881:6881/udp"
+    depends_on:
+      folders:
+        condition: service_completed_successfully
+    stop_grace_period: 10s
+    restart: unless-stopped
