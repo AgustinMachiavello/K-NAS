@@ -1,12 +1,12 @@
-# Immich: photos and videos from all your devices.
+# Immich: photos and videos. Settings in .env. Nightly database backup goes to <UPLOAD_LOCATION>/backups.
 services:
   immich-server:
     container_name: immich_server
     image: ghcr.io/immich-app/immich-server:${IMMICH_VERSION:-v2}
     ports:
-      - "${APP_PORT}:2283"
+      - "2283:2283"
     volumes:
-      - ${APP_DATA}/library:/data
+      - ${UPLOAD_LOCATION}:/data
       - /etc/localtime:/etc/localtime:ro
     environment:
       DB_HOSTNAME: immich_postgres
@@ -25,7 +25,7 @@ services:
     container_name: immich_machine_learning
     image: ghcr.io/immich-app/immich-machine-learning:${IMMICH_VERSION:-v2}
     volumes:
-      - ${APP_DATA}/model-cache:/cache
+      - model-cache:/cache
     restart: unless-stopped
     healthcheck:
       disable: false
@@ -46,8 +46,11 @@ services:
       POSTGRES_DB: immich
       POSTGRES_INITDB_ARGS: "--data-checksums"
     volumes:
-      - ${APP_DATA}/postgres:/var/lib/postgresql/data
+      - ${DB_DATA_LOCATION}:/var/lib/postgresql/data
     shm_size: 128mb
     restart: unless-stopped
     healthcheck:
       disable: false
+
+volumes:
+  model-cache:
