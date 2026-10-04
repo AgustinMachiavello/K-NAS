@@ -1,0 +1,11 @@
+- resources:
+    cpu: true
+    memory: true
+
+- resources:
+    label: System disk
+    disk: /
+
+- resources:
+    label: Data disk
+    disk: /mnt/storage

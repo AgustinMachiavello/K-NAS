@@ -1,0 +1,15 @@
+title: K-NAS
+headerStyle: clean
+layout:
+  Apps:
+    style: row
+    columns: 3
+  Movies and series:
+    style: row
+    columns: 3
+  Music:
+    style: row
+    columns: 3
+  Manage your NAS:
+    style: row
+    columns: 3

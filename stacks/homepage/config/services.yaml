@@ -1,0 +1,66 @@
+# One link per app. {{HOMEPAGE_FILE_HOST}} is the NAS's IP.
+# To add an app: add its stack in Dockge, then a link here (Cockpit > Files, /opt/stacks/homepage/config).
+
+- Apps:
+    - Immich:
+        icon: immich.png
+        href: http://{{HOMEPAGE_FILE_HOST}}:2283
+        description: Photos and videos. Start it in Dockge first.
+    - Pi-hole:
+        icon: pi-hole.png
+        href: http://{{HOMEPAGE_FILE_HOST}}:8080/admin
+        description: Blocks ads on every device. Start it in Dockge first.
+
+- Movies and series:
+    - Jellyfin:
+        icon: jellyfin.png
+        href: http://{{HOMEPAGE_FILE_HOST}}:8096
+        description: Watch your movies and series. Start "media" in Dockge first.
+    - Seerr:
+        icon: seerr.png
+        href: http://{{HOMEPAGE_FILE_HOST}}:5055
+        description: Ask for a movie or series
+    - Radarr:
+        icon: radarr.png
+        href: http://{{HOMEPAGE_FILE_HOST}}:7878
+        description: Finds and downloads movies
+    - Sonarr:
+        icon: sonarr.png
+        href: http://{{HOMEPAGE_FILE_HOST}}:8989
+        description: Finds and downloads series
+    - Prowlarr:
+        icon: prowlarr.png
+        href: http://{{HOMEPAGE_FILE_HOST}}:9696
+        description: Where Radarr and Sonarr search
+    - qBittorrent:
+        icon: qbittorrent.png
+        href: http://{{HOMEPAGE_FILE_HOST}}:8085
+        description: Downloads torrents
+
+- Music:
+    - Navidrome:
+        icon: navidrome.png
+        href: http://{{HOMEPAGE_FILE_HOST}}:4533
+        description: Your music. Start it in Dockge first.
+    - Lidarr:
+        icon: lidarr.png
+        href: http://{{HOMEPAGE_FILE_HOST}}:8686
+        description: Finds and downloads music. Part of "media" in Dockge.
+    - Mixarr:
+        icon: mdi-music-circle
+        href: https://{{HOMEPAGE_FILE_HOST}}:3443
+        description: Discover new artists for Lidarr. Start it in Dockge first.
+
+- Manage your NAS:
+    - Cockpit:
+        icon: cockpit.png
+        href: https://{{HOMEPAGE_FILE_HOST}}:9090
+        description: Disks, files, users and updates
+    - Dockge:
+        icon: dockge.png
+        href: http://{{HOMEPAGE_FILE_HOST}}:5001
+        description: Start, stop and update apps
+    - Backrest:
+        icon: backrest.png
+        href: http://{{HOMEPAGE_FILE_HOST}}:9898
+        description: Backups and restores

@@ -1,0 +1,25 @@
+# Backrest: backups and restores in the browser (restic).
+services:
+  backrest:
+    container_name: backrest
+    image: ghcr.io/garethgeorge/backrest:latest
+    hostname: k-nas
+    ports:
+      - "9898:9898"
+    volumes:
+      - ./data:/data
+      - ./config:/config
+      - ./cache:/cache
+      # All disks under /mnt. rslave: disks mounted later show up
+      - type: bind
+        source: /mnt
+        target: /mnt
+        bind:
+          propagation: rslave
+      # App settings, read-only
+      - /opt/stacks:/opt/stacks:ro
+    environment:
+      BACKREST_DATA: /data
+      BACKREST_CONFIG: /config/config.json
+      XDG_CACHE_HOME: /cache
+    restart: unless-stopped

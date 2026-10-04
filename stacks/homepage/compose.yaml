@@ -1,0 +1,21 @@
+# Homepage: start page with app links and disk space.
+services:
+  homepage:
+    container_name: homepage
+    image: ghcr.io/gethomepage/homepage:v2.4.0
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./config:/app/config
+      # Read-only, for disk space. rslave: disks mounted later show up
+      - type: bind
+        source: /mnt
+        target: /mnt
+        read_only: true
+        bind:
+          propagation: rslave
+    environment:
+      HOMEPAGE_ALLOWED_HOSTS: "*"
+      # NAS IP, written at boot by os/boot.sh
+      HOMEPAGE_FILE_HOST: /app/config/host
+    restart: unless-stopped
