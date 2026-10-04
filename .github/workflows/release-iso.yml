@@ -1,72 +1,68 @@
 name: Release ISO
 
-# Build the auto-installable Debian ISO and attach it to a GitHub release.
-# Publish a release by pushing a tag, e.g.: git tag v0.1 && git push origin v0.1
-# Triggers: pushing a version tag (publishes a release) or a manual run from the Actions tab
+# Builds the ISO. A version tag publishes a release (git tag v0.1 && git push origin v0.1); a manual run keeps it as an artifact.
 on:
   push:
     tags:
       - "v*"
   workflow_dispatch:
 
-# Needed so the workflow can create releases and upload files to them
+# To create releases
 permissions:
   contents: write
 
 jobs:
   build:
-    # Run on external Github server
     runs-on: ubuntu-latest
     steps:
-      # 1. Get the repo code
       - uses: actions/checkout@v4
 
-      # 1b. A release tag must match KNAS_VERSION in config.sh, so the ISO is labeled correctly
+      # Tag must match VERSION
       - name: Check the tag matches the version
         if: startsWith(github.ref, 'refs/tags/')
         run: |
-          version=$(sed -n 's/^KNAS_VERSION="\(.*\)"/\1/p' apps/tui/config.sh)
+          version=$(cat VERSION)
           [ "$GITHUB_REF_NAME" = "v$version" ] || {
-            echo "Tag $GITHUB_REF_NAME does not match KNAS_VERSION $version in apps/tui/config.sh"
+            echo "Tag $GITHUB_REF_NAME does not match VERSION $version"
             exit 1
           }
 
-      # 2. Fetch the official Debian ISO and prove it is genuine
+      # Download the Debian ISO and verify it
       - name: Download and verify the latest Debian netinst ISO
         working-directory: os/debian
         env:
-          # Debian CD signing key, see https://www.debian.org/CD/verify
+          # Debian CD signing key (debian.org/CD/verify)
           DEBIAN_CD_KEY: DF9B9C49EAA9298432589D76DA87E80D6294BE9B
         run: |
-          # Where Debian publishes its latest amd64 netinst ISO and signed checksums
+          # Latest netinst ISO and signed checksums
           base=https://cdimage.debian.org/debian-cd/current/amd64/iso-cd
-          # Download the checksum list and its signature
+          # Checksums and signature
           curl -fsSLO "$base/SHA256SUMS"
           curl -fsSLO "$base/SHA256SUMS.sign"
 
-          # Verify the checksum list was signed by the pinned Debian key
+          # Check the signature
           export GNUPGHOME="$(mktemp -d)"
           gpg --batch --keyserver hkps://keyring.debian.org --recv-keys "$DEBIAN_CD_KEY"
           gpg --batch --status-fd 1 --verify SHA256SUMS.sign SHA256SUMS \
             | grep "^\[GNUPG:\] VALIDSIG .* $DEBIAN_CD_KEY\$"
 
-          # Verify the ISO matches the signed checksum list
+          # Check the ISO
           iso=$(grep -o 'debian-[0-9.]*-amd64-netinst\.iso' SHA256SUMS | head -n 1)
           curl -fsSLO "$base/$iso"
           grep " $iso\$" SHA256SUMS | sha256sum -c -
-          # Clean up, only the ISO is needed from here
+          # Only the ISO is needed now
           rm SHA256SUMS SHA256SUMS.sign
 
-      # 3. Add preseed.cfg and the unattended boot menu to the ISO
+      # Build the ISO
       - name: Build the auto-installable ISO
-        run: ./apps/tui/build-iso.sh
+        run: ./os/debian/build-iso.sh
 
-      # 4. Create a checksum so users can verify their download
+      # Checksum for users
       - name: Checksum
         working-directory: os/debian
         run: sha256sum debian-auto-installable.iso > debian-auto-installable.iso.sha256
 
-      # 5a. Tag push: attach the ISO and checksum to the GitHub release
+      # Tag: attach to the release
       - name: Publish release
         if: startsWith(github.ref, 'refs/tags/')
         uses: softprops/action-gh-release@v2
@@ -75,7 +71,7 @@ jobs:
             os/debian/debian-auto-installable.iso
             os/debian/debian-auto-installable.iso.sha256
 
-      # 5b. Manual run: no release, keep the ISO as a temporary download on the run page
+      # Manual run: keep as artifact
       - name: Keep the ISO as a build artifact (manual runs)
         if: ${{ !startsWith(github.ref, 'refs/tags/') }}
         uses: actions/upload-artifact@v4

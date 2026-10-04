@@ -1,15 +1,18 @@
 #!/bin/sh
 
-# Runs at the end of the Debian install
+# Runs at the end of the Debian install. POSIX sh: the installer has no bash.
 
 SRC="${SRC:-/cdrom/k-nas}"
 TARGET="${TARGET:-/target}"
+# Tests replace this
+IN_TARGET="${IN_TARGET:-in-target}"
 
-# 1. Copy K-NAS to the installed system
+set -e
+
+# Copy K-NAS to the new system
 mkdir -p "$TARGET/opt/k-nas"
 cp -r "$SRC/." "$TARGET/opt/k-nas/"
-chmod +x "$TARGET"/opt/k-nas/apps/tui/*.sh
+chmod +x "$TARGET"/opt/k-nas/os/*.sh
 
-# 2. Show the K-NAS welcome screen at login.
-mkdir -p "$TARGET/etc/profile.d"
-ln -sf /opt/k-nas/apps/tui/login-hook.sh "$TARGET/etc/profile.d/k-nas.sh"
+# Install everything inside it
+$IN_TARGET bash /opt/k-nas/os/setup.sh

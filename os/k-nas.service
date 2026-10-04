@@ -1,0 +1,16 @@
+[Unit]
+Description=K-NAS: show the address and start the core apps
+Wants=network-online.target
+After=network-online.target docker.service
+Requires=docker.service
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+ExecStart=/opt/k-nas/os/boot.sh
+# Retry if the network is not ready on first boot
+Restart=on-failure
+RestartSec=30
+
+[Install]
+WantedBy=multi-user.target
