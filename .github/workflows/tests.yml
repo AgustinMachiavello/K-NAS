@@ -1,0 +1,31 @@
+name: Tests
+
+# Shell lint, unit tests and Compose validation, on push to main and PRs
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      # Lint shell scripts
+      - name: Shellcheck
+        run: shellcheck install.sh os/*.sh os/debian/*.sh
+
+      # Unit tests
+      - name: Install bats
+        run: sudo apt-get update -qq && sudo apt-get install -y -qq bats
+
+      - name: Bats tests
+        run: bats tests/
+
+      # Compose files are valid
+      - name: Validate Compose files
+        run: |
+          for file in stacks/*/compose.yaml; do
+            docker compose -f "$file" config -q
+          done
