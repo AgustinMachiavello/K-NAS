@@ -141,6 +141,17 @@ services:
       - ./warp:/var/lib/cloudflare-warp
     restart: unless-stopped
 
+  # Solves Cloudflare's browser check for Prowlarr, through WARP.
+  # Prowlarr: add a FlareSolverr proxy http://flaresolverr:8191 with the same tag as WARP.
+  flaresolverr:
+    container_name: flaresolverr
+    image: ghcr.io/flaresolverr/flaresolverr:latest
+    environment:
+      PROXY_URL: socks5://warp:1080
+    depends_on:
+      - warp
+    restart: unless-stopped
+
   qbittorrent:
     container_name: qbittorrent
     image: lscr.io/linuxserver/qbittorrent:latest

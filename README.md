@@ -169,7 +169,8 @@ Now ask for something in Seerr. Follow the download in qBittorrent; it appears i
 Some providers block torrent sites: Prowlarr's **Test** fails, and the site only opens in your browser with a VPN. The `media` stack includes **WARP** (Cloudflare's free VPN) as a proxy that only Prowlarr uses, and only for the sites you choose. Everything else, downloads included, stays on your normal connection.
 
 1. In Prowlarr, **Settings > Indexers > + > Socks5**: name `WARP`, host `warp`, port `1080`, tag `warp`. **Save**.
-2. Edit the blocked site (**Indexers**, click it), add the tag `warp`, then **Test** and **Save**.
+2. Some sites also show Cloudflare's browser check (Prowlarr reports a 403 or "blocked by CloudFlare"). For those, also add **Settings > Indexers > + > FlareSolverr**: name `FlareSolverr`, host `http://flaresolverr:8191/`, the same tag `warp`. **Save**. FlareSolverr goes through WARP too.
+3. Edit the blocked site (**Indexers**, click it), add the tag `warp`, then **Test** and **Save**.
 
 qBittorrent also works alone: add a torrent with **+**, it goes to `/mnt/storage/media/downloads`.
 
