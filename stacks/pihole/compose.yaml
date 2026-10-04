@@ -1,0 +1,20 @@
+# Pi-hole: ad blocking via DNS. Then set the NAS IP as your router's DNS. Settings in .env.
+services:
+  pihole:
+    container_name: pihole
+    image: pihole/pihole:latest
+    ports:
+      - "53:53/tcp"
+      - "53:53/udp"
+      # Web page at :8080/admin
+      - "8080:80"
+    volumes:
+      - ./etc-pihole:/etc/pihole
+      - /etc/localtime:/etc/localtime:ro
+    environment:
+      FTLCONF_webserver_api_password: ${PIHOLE_PASSWORD}
+      # Answer every device (Docker default network)
+      FTLCONF_dns_listeningMode: ALL
+    cap_add:
+      - SYS_NICE
+    restart: unless-stopped
