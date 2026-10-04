@@ -66,7 +66,6 @@ cat <<BANNER
 
  Welcome, ${USER:-$(id -un)}
 
- Name     : $(hostname).local
  Address  : $(sed '2,$s/^/            /' <<< "${addresses:-no network address}")
  Storage  : $storage
  Docker   : $docker_status
