@@ -8,6 +8,5 @@ services:
     volumes:
       - ${APP_DATA}/config:/app/config
     environment:
-      # Homepage only answers to the names listed here (it blocks unknown hosts)
-      HOMEPAGE_ALLOWED_HOSTS: ${KNAS_HOSTNAME}:${APP_PORT},${KNAS_IP}:${APP_PORT}
+      HOMEPAGE_ALLOWED_HOSTS: "*"
     restart: unless-stopped
