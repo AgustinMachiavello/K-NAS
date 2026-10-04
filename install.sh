@@ -25,10 +25,10 @@ if [ "$ID" != "debian" ]; then
 fi
 
 # Install the tools K-NAS needs
-if ! command -v whiptail >/dev/null 2>&1 || ! dpkg -s avahi-daemon >/dev/null 2>&1; then
-    echo "Installing whiptail and avahi-daemon..."
+if ! command -v whiptail >/dev/null 2>&1; then
+    echo "Installing whiptail..."
     apt-get update -qq
-    apt-get install -y -qq whiptail avahi-daemon
+    apt-get install -y -qq whiptail
 fi
 
 # Download K-NAS (replaces any previous copy)
