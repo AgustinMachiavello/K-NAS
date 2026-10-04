@@ -1,0 +1,15 @@
+# Mixarr: finds new artists for Lidarr. Set BASE_URL in .env first.
+services:
+  mixarr:
+    container_name: mixarr
+    image: ghcr.io/aquantumofdonuts/mixarr:latest
+    ports:
+      # Web page (https, own certificate)
+      - "3443:443"
+    volumes:
+      # Database and settings
+      - ./data:/data
+    environment:
+      SESSION_SECRET: ${SESSION_SECRET}
+      BASE_URL: ${BASE_URL}
+    restart: unless-stopped
