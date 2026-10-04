@@ -117,7 +117,7 @@ It may be very slow or stop working. Install it anyway?"
     [ -f "$secrets" ] && env_file=(--env-file "$secrets")
 
     # This command is in an "if", so a failure does not stop the other apps
-    if KNAS_HOSTNAME="$(hostname).local" KNAS_IP="$IP" APP_PORT="$port" APP_DATA="$data" docker compose "${env_file[@]}" -p "k-nas-$id" -f "$KNAS_SERVICES_DIR/$id/docker-compose.yml" up -d < /dev/null; then
+    if KNAS_IP="$IP" APP_PORT="$port" APP_DATA="$data" docker compose "${env_file[@]}" -p "k-nas-$id" -f "$KNAS_SERVICES_DIR/$id/docker-compose.yml" up -d < /dev/null; then
         mkdir -p "$(dirname "$APPS_FILE")"
         grep -qx "$id" "$APPS_FILE" 2>/dev/null || echo "$id" >> "$APPS_FILE"
         chmod 644 "$APPS_FILE"
