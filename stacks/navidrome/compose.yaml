@@ -1,0 +1,12 @@
+# Navidrome: music streaming (Subsonic compatible). Settings in .env.
+services:
+  navidrome:
+    container_name: navidrome
+    image: deluan/navidrome:latest
+    ports:
+      - "4533:4533"
+    volumes:
+      - ./data:/data
+      # Read-only
+      - ${MUSIC_FOLDER}:/music:ro
+    restart: unless-stopped
