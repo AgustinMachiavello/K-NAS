@@ -29,7 +29,8 @@ homepage_update() {
 
     root=$(storage_root)
     [ -n "$root" ] || return 0
-    host="$(hostname).local"
+    host=$(primary_ip)
+    [ -n "$host" ] || return 0
 
     {
         while read -r id; do
