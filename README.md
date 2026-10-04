@@ -164,6 +164,13 @@ Setup takes about 10 minutes, once:
 
 Now ask for something in Seerr. Follow the download in qBittorrent; it appears in Jellyfin when done. On a TV or phone, use the Jellyfin app with `http://<NAS-IP>:8096`.
 
+### If your internet provider blocks a site
+
+Some providers block torrent sites: Prowlarr's **Test** fails, and the site only opens in your browser with a VPN. The `media` stack includes **WARP** (Cloudflare's free VPN) as a proxy that only Prowlarr uses, and only for the sites you choose. Everything else, downloads included, stays on your normal connection.
+
+1. In Prowlarr, **Settings > Indexers > + > Socks5**: name `WARP`, host `warp`, port `1080`, tag `warp`. **Save**.
+2. Edit the blocked site (**Indexers**, click it), add the tag `warp`, then **Test** and **Save**.
+
 qBittorrent also works alone: add a torrent with **+**, it goes to `/mnt/storage/media/downloads`.
 
 Peers see the NAS's public IP. Download only what you have the right to.

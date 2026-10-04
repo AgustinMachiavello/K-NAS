@@ -31,7 +31,7 @@
     - Prowlarr:
         icon: prowlarr.png
         href: http://{{HOMEPAGE_FILE_HOST}}:9696
-        description: Where Radarr and Sonarr search
+        description: Where Radarr, Sonarr and Lidarr search
     - qBittorrent:
         icon: qbittorrent.png
         href: http://{{HOMEPAGE_FILE_HOST}}:8085
