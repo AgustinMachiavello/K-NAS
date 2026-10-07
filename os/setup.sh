@@ -36,7 +36,17 @@ apt-get install -y --no-install-recommends -t "$VERSION_CODENAME-backports" \
     cockpit-ws cockpit-system cockpit-bridge cockpit-storaged cockpit-packagekit cockpit-files
 
 
-# 3. Automatic security updates
+# 3. Tailscale (official repo), for access from outside the home. On the host, not in Docker, so
+#    Cockpit stays reachable if Docker breaks. The user logs in with: sudo tailscale up
+curl -fsSL "https://pkgs.tailscale.com/stable/debian/$VERSION_CODENAME.noarmor.gpg" \
+    -o /usr/share/keyrings/tailscale-archive-keyring.gpg
+curl -fsSL "https://pkgs.tailscale.com/stable/debian/$VERSION_CODENAME.tailscale-keyring.list" \
+    -o /etc/apt/sources.list.d/tailscale.list
+apt-get update
+apt-get install -y tailscale
+
+
+# 4. Automatic security updates
 apt-get install -y unattended-upgrades
 cat > /etc/apt/apt.conf.d/20auto-upgrades <<'EOF'
 APT::Periodic::Update-Package-Lists "1";
@@ -44,7 +54,7 @@ APT::Periodic::Unattended-Upgrade "1";
 EOF
 
 
-# 4. App stacks (Dockge manages this folder)
+# 5. App stacks (Dockge manages this folder)
 mkdir -p "$STACKS_DIR"
 for stack in "$KNAS_DIR"/stacks/*/; do
     name=$(basename "$stack")
@@ -60,7 +70,7 @@ for env_file in "$STACKS_DIR"/*/.env; do
 done
 
 
-# 5. Start the core apps at every boot
+# 6. Start the core apps at every boot
 ln -sf "$KNAS_DIR/os/k-nas.service" /etc/systemd/system/k-nas.service
 systemctl enable k-nas.service
 
