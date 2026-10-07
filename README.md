@@ -99,6 +99,7 @@ To browse or copy files, use **Files** in Cockpit.
 | [Jellyfin](https://jellyfin.org) | `http://<NAS-IP>:8096` | Watch your movies and series, on any device | created on first visit |
 | [Seerr](https://github.com/seerr-team/seerr) | `http://<NAS-IP>:5055` | Ask for a movie or series | your Jellyfin user |
 | [Radarr](https://radarr.video) / [Sonarr](https://sonarr.tv) | `:7878` / `:8989` | Find and download movies / series | none on your home network |
+| [Bazarr](https://www.bazarr.media) | `http://<NAS-IP>:6767` | Finds subtitles for your movies and series | none, add one in its settings |
 | [Prowlarr](https://prowlarr.com) | `http://<NAS-IP>:9696` | The torrent sites Radarr, Sonarr and Lidarr search | none on your home network |
 | [qBittorrent](https://www.qbittorrent.org) | `http://<NAS-IP>:8085` | Downloads torrents | none on your home network |
 | [Navidrome](https://www.navidrome.org) | `http://<NAS-IP>:4533` | Your music, in the browser and in music apps | created on first visit |
@@ -161,6 +162,12 @@ Setup takes about 10 minutes, once:
    - **Settings > Apps > + > Radarr:** Prowlarr server `http://prowlarr:9696`, Radarr server `http://radarr:7878`, and Radarr's API key (**Settings > General**). Same for Sonarr (`http://sonarr:8989`) and Lidarr (`http://lidarr:8686`).
 5. **Jellyfin** (`:8096`). Create your account, then add libraries: **Movies** from `/media/movies`, **Shows** from `/media/series`, and **Music** from `/media/music` if you like.
 6. **Seerr** (`:5055`). Choose **Jellyfin**, server `jellyfin`, port `8096`, and log in with your Jellyfin user. Turn on the libraries, then add Radarr (server `radarr`, port `7878`, its API key, root folder `/data/movies`) and Sonarr (server `sonarr`, port `8989`, root folder `/data/series`).
+7. **Bazarr** (`:6767`), for subtitles:
+   - **Settings > Radarr** and **Settings > Sonarr:** enable, host `radarr` / `sonarr`, port `7878` / `8989`, and their API keys. **Test**, then **Save**.
+   - **Settings > Languages:** add your languages, create a profile with them, and set it as the default for movies and series.
+   - **Settings > Providers:** enable at least OpenSubtitles (needs a free account) and one or two more.
+   - Movies and series it found before you set the profile: select them in **Movies** and **Series** > **Mass Edit**, and set the profile.
+   - It saves the `.srt` next to each video and Jellyfin shows it in the player. It does not change audio tracks.
 
 Now ask for something in Seerr. Follow the download in qBittorrent; it appears in Jellyfin when done. On a TV or phone, use the Jellyfin app with `http://<NAS-IP>:8096`.
 
