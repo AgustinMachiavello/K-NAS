@@ -28,6 +28,10 @@
         icon: sonarr.png
         href: http://{{HOMEPAGE_FILE_HOST}}:8989
         description: Finds and downloads series
+    - Bazarr:
+        icon: bazarr.png
+        href: http://{{HOMEPAGE_FILE_HOST}}:6767
+        description: Finds subtitles for your movies and series
     - Prowlarr:
         icon: prowlarr.png
         href: http://{{HOMEPAGE_FILE_HOST}}:9696
