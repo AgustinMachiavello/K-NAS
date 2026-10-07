@@ -113,6 +113,18 @@ The download apps (Radarr, Sonarr, Lidarr, Prowlarr, qBittorrent) need no login 
 
 Homepage, Dockge and Backrest start at every boot. Other apps start from Dockge and keep running across reboots until you stop them.
 
+## Use it from outside your home
+
+[Tailscale](https://tailscale.com) comes installed: a private network between your devices, with no ports to open in your router. Only devices logged in to your account can reach the NAS.
+
+1. In **Cockpit > Terminal**, run `sudo tailscale up`. Open the link it prints and log in (this creates your free account).
+2. In the [Tailscale admin console](https://login.tailscale.com/admin/machines), open your NAS's **⋯** menu and choose **Disable key expiry**. Otherwise the NAS logs out every 180 days.
+3. Install the Tailscale app on your phone and computer, and log in with the same account.
+
+With Tailscale on, use the NAS's name instead of its IP, from anywhere: `http://<NAS-name>:2283` for Immich, `:8096` for Jellyfin, `:3000` for Homepage. If the name does not work, use the address from `tailscale ip -4` (it starts with `100.`). In the Immich app, **Settings > Networking** switches between your home IP on your Wi-Fi and the Tailscale address elsewhere.
+
+Already installed K-NAS before Tailscale was added? Run `curl -fsSL https://tailscale.com/install.sh | sh` first. Then, in qBittorrent, **Tools > Options > Web UI**, add `100.64.0.0/10` (your Tailscale devices) to "Bypass authentication for clients in whitelisted IP subnets". If Radarr, Sonarr, Lidarr or Prowlarr ask for a login over Tailscale, set one in **Settings > General > Authentication**.
+
 ## Listen to your music with Navidrome
 
 1. Copy your music to `/mnt/storage/media/music` (Cockpit > **Files**). Any layout works, it reads the tags.
