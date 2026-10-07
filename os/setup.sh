@@ -14,6 +14,8 @@ export DEBIAN_FRONTEND=noninteractive
 . /etc/os-release
 apt-get update
 apt-get install -y ca-certificates curl
+# For copying old drives from the terminal: rsync copies, tmux keeps it running if the browser closes.
+apt-get install -y rsync tmux
 
 # 1. Docker (official repo). Skipped if Docker with Compose is already installed, however it was installed.
 if ! docker compose version >/dev/null 2>&1; then
