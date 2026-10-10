@@ -1,0 +1,15 @@
+# Ombi: ask for an album or artist, it goes to Lidarr. Seerr does movies and series.
+services:
+  ombi:
+    container_name: ombi
+    image: lscr.io/linuxserver/ombi:latest
+    environment:
+      # Files belong to the Debian user you created
+      PUID: 1000
+      PGID: 1000
+    ports:
+      - "3579:3579"
+    volumes:
+      # Database and settings
+      - ./config:/config
+    restart: unless-stopped

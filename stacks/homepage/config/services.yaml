@@ -54,6 +54,10 @@
         icon: mdi-music-circle
         href: https://{{HOMEPAGE_FILE_HOST}}:3443
         description: Discover new artists for Lidarr. Start it in Dockge first.
+    - Ombi:
+        icon: ombi.png
+        href: http://{{HOMEPAGE_FILE_HOST}}:3579
+        description: Ask for an album or artist. Start it in Dockge first.
 
 - Manage your NAS:
     - Cockpit:

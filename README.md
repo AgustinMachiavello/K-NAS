@@ -105,6 +105,7 @@ To browse or copy files, use **Files** in Cockpit.
 | [Navidrome](https://www.navidrome.org) | `http://<NAS-IP>:4533` | Your music, in the browser and in music apps | created on first visit |
 | [Lidarr](https://lidarr.audio) | `http://<NAS-IP>:8686` | Find and download music | none on your home network |
 | [Mixarr](https://github.com/aquantumofdonuts/mixarr) | `https://<NAS-IP>:3443` | Discover new artists for Lidarr | created on first visit |
+| [Ombi](https://ombi.io) | `http://<NAS-IP>:3579` | Ask for an album or artist | created on first visit |
 | [Pi-hole](https://pi-hole.net) | `http://<NAS-IP>:8080/admin` | Blocks ads and trackers on every device | password in its `.env` in Dockge |
 
 The first visitor creates the account, so open each app soon after installing. Dockge and Cockpit control the whole machine: never forward their ports in your router.
@@ -148,6 +149,15 @@ On your phone, use any Subsonic app (Symfonium or Tempo on Android, play:Sub or 
 1. In Dockge, open the `mixarr` stack. In its `.env`, replace `NAS-IP` in `BASE_URL` with your NAS's IP, then press **Start**.
 2. Open `https://<NAS-IP>:3443` (certificate warning is expected) and create your account.
 3. In **Settings > Connections**, add Lidarr (`http://<NAS-IP>:8686` and its API key), then your music services.
+
+**Ombi** is Seerr for music: search an album or artist, press **Request**, and Lidarr downloads it. In its own `ombi` stack:
+
+1. In Dockge, open the `ombi` stack and press **Start**.
+2. Open `http://<NAS-IP>:3579`. In the wizard, choose **Jellyfin** (host `<NAS-IP>`, port `8096`, an API key from Jellyfin's **Dashboard > API Keys**), then create your account.
+3. **Settings > Music > Lidarr:** enable, host `<NAS-IP>`, port `8686`, Lidarr's API key. Press **Load** next to the quality profile, metadata profile and root folder (`/data/music`), then **Submit**.
+4. To let others log in with their Jellyfin user: **Settings > User Management > Import Jellyfin users**.
+
+Now search in Ombi's **Requests > Music**. A requested album downloads only that album; a requested artist downloads all of them.
 
 ## Movies and series
 
