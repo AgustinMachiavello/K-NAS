@@ -123,7 +123,7 @@ Homepage, Dockge and Backrest start at every boot. Other apps start from Dockge 
 
 With Tailscale on, use the NAS's name instead of its IP, from anywhere: `http://<NAS-name>:2283` for Immich, `:8096` for Jellyfin, `:3000` for Homepage. If the name does not work, use the address from `tailscale ip -4` (it starts with `100.`). In the Immich app, **Settings > Networking** switches between your home IP on your Wi-Fi and the Tailscale address elsewhere.
 
-Already installed K-NAS before Tailscale was added? Run `curl -fsSL https://tailscale.com/install.sh | sh` first. Then, in qBittorrent, **Tools > Options > Web UI**, add `100.64.0.0/10` (your Tailscale devices) to "Bypass authentication for clients in whitelisted IP subnets". If Radarr, Sonarr, Lidarr or Prowlarr ask for a login over Tailscale, set one in **Settings > General > Authentication**.
+Already installed K-NAS before Tailscale was added? Run the install command again first ([Updates](#updates)). Then, in qBittorrent, **Tools > Options > Web UI**, add `100.64.0.0/10` (your Tailscale devices) to "Bypass authentication for clients in whitelisted IP subnets". If Radarr, Sonarr, Lidarr or Prowlarr ask for a login over Tailscale, set one in **Settings > General > Authentication**.
 
 ## Listen to your music with Navidrome
 
@@ -213,6 +213,7 @@ Every app is a folder in `/opt/stacks` with a `compose.yaml`. In Dockge, click *
 
 - **Debian** installs security updates daily. Other updates: Cockpit > **Software updates**.
 - **Apps:** open the app in Dockge and press **Update**. Read the release notes first, especially for Immich.
+- **K-NAS** (new apps, links and fixes): run the install command again (see [I already have Debian](#i-already-have-debian)). It updates each app's `compose.yaml` and Homepage's links, and restarts the running apps that changed. Your `.env` files and app settings are kept. A file you changed yourself is kept too, with the new version next to it as `.k-nas-new`.
 
 ## I already have Debian
 

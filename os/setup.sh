@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Turns a plain Debian into K-NAS. Run as root by late-command.sh or install.sh.
-# Safe to run again: existing stacks are kept.
+# Safe to run again: updates the stacks, keeping your changes (see update-stacks.sh).
 
 set -eu
 
@@ -54,12 +54,8 @@ APT::Periodic::Unattended-Upgrade "1";
 EOF
 
 
-# 5. App stacks (Dockge manages this folder)
-mkdir -p "$STACKS_DIR"
-for stack in "$KNAS_DIR"/stacks/*/; do
-    name=$(basename "$stack")
-    [ -e "$STACKS_DIR/$name" ] || cp -r "$stack" "$STACKS_DIR/$name"
-done
+# 5. App stacks (Dockge manages this folder): new ones copied, existing ones updated unless you changed them
+bash "$KNAS_DIR/os/update-stacks.sh"
 
 # Random passwords, made once
 for env_file in "$STACKS_DIR"/*/.env; do
